@@ -1,31 +1,26 @@
-<!DOCTYPE html>
-<html lang="en-US">
+<html>
+    <body>
+    
+    <p id="Temperature">Hello World!</p>
+    
+    <script scr="js/asali.js">
+        class Asali {
+            constructor() {
+                this._temperature = 0.;
+            }
+            get temperature() {
+                return this._temperature;
+            }
+            
+            set temperature(temperature) {
+                this._temperature = temperature;
+            }
+        }
 
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="css/bootstrap.css">
-
-</head>
-
-<body>
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col">
-
-      </div>
-      <div class="col">
-        <h1 class="text-center"><b>ASALI: Modeling and beyond</b></h1>
-        <p class="text-center">Working on the best software ever</p>
-      </div>
-      <div class="col">
-      </div>
-    </div>
-  </div>
-
-
-</body>
+        asali = new Asali();
+        asali.temperature = 298.15
+        document.getElementById("Temperature").innerHTML = asali.temperature;
+    </script>
+    
+    </body>
 </html>
