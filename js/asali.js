@@ -10,8 +10,3 @@ class Asali {
         this._temperature = temperature;
     }
 }
-
-function set_temperature(asali, temperature){
-    asali.temperature = temperature;
-    return asali.temperature;
-}

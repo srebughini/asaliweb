@@ -1,26 +1,23 @@
 <html>
-    <body>
     
-    <p id="Temperature">Hello World!</p>
-    
-    <script scr="js/asali.js">
-        class Asali {
-            constructor() {
-                this._temperature = 0.;
-            }
-            get temperature() {
-                return this._temperature;
-            }
-            
-            set temperature(temperature) {
-                this._temperature = temperature;
-            }
-        }
+    <head>
+        <script src="js/asali.js"></script>   
+    </head>
 
-        asali = new Asali();
-        asali.temperature = 298.15
-        document.getElementById("Temperature").innerHTML = asali.temperature;
-    </script>
+
+    <body>
+    <h1>Asali first version</h1>
+
+    <script src="js/asali_scripts.js"></script>
+
+    <form>
+        <label for="Input_temperature">Temperature [K]:</label>
+        <input type="text" id="Input_temperature" name="Input_temperature"><br><br>
+        <input type="button" value="Save temperature" onclick="asaliSaveTemperature();"/>
+    </form>
+
+    <button type="button" onclick="asaliShowTemperature()">Click me to display temperature saved in asali class.</button>
+    <p id="Temperature"></p>
     
     </body>
 </html>
