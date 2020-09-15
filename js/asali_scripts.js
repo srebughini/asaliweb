@@ -8,8 +8,7 @@ function saveTemperatureAndPressure()
 
 function addSpecies()
 {
-    asali.names.push(document.getElementById("Input_name").value);
-    asali.x.push(document.getElementById("Input_value").value);
+    asali.addMoleFraction(document.getElementById("Input_name").value, document.getElementById("Input_value").value);
 }
 
 function clearAllInput()
