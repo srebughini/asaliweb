@@ -12,12 +12,28 @@
 
     <form>
         <label for="Input_temperature">Temperature [K]:</label>
-        <input type="text" id="Input_temperature" name="Input_temperature"><br><br>
-        <input type="button" value="Save temperature" onclick="asaliSaveTemperature();"/>
+        <input type="text" id="Input_temperature" name="Input_temperature">
+        <br><br>
+        <label for="Input_pressure">Pressure [Pa]:</label>
+        <input type="text" id="Input_pressure" name="Input_pressure">
+        <br><br>
+        <input type="button" value="Save temperature and pressure" onclick="saveTemperatureAndPressure()"/>
+        <br><br>
+        <label for="Input_name">Name:</label>
+        <input type="text" id="Input_name" name="Input_name">
+        <label for="Input_value">Mole Fraction:</label>
+        <input type="text" id="Input_value" name="Input_value">
+        <input type="button" value="Add" onclick="addSpecies()"/>
+        <br><br>
+        <input type="button" value="Clear specie data" onclick="cleanSpecies()"/>
+        <br><br>
+        <input type="button" value="Clear all input data" onclick="clearAllInput()"/>
     </form>
 
-    <button type="button" onclick="asaliShowTemperature()">Click me to display temperature saved in asali class.</button>
+    <button type="button" onclick="showInput()">Click me to display saved input in asali class.</button>
     <p id="Temperature"></p>
+    <p id="Pressure"></p>
+    <p id="Names"></p>
     
     </body>
 </html>

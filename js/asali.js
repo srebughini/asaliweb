@@ -1,12 +1,9 @@
 class Asali {
     constructor() {
-        this._temperature = 0.;
-    }
-    get temperature() {
-        return this._temperature;
-    }
-    
-    set temperature(temperature) {
-        this._temperature = temperature;
+        this.temperature = 0.;
+        this.pressure = 0.;
+        this.x = [];
+        this.y = [];
+        this.names = [];
     }
 }
