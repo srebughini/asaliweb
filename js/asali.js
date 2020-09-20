@@ -45,6 +45,17 @@ class Asali {
         }
     }
 
+    removeSpecies(name, y)
+    {
+        if (this.names.includes(name) == true)
+        {
+            var idx = this.names.indexOf(name);
+            this.y.splice(idx,1);
+            this.x.splice(idx,1);
+            this.names.splice(idx,1);
+        }        
+    }
+
     setMassFracion(names, y)
     {
         if (names.length != y.length)

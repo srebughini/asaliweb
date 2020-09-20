@@ -11,6 +11,11 @@ function addSpecies()
     asali.addMoleFraction(document.getElementById("Input_name").value, document.getElementById("Input_value").value);
 }
 
+function removeSpecies()
+{
+    asali.removeSpecies(document.getElementById("Input_name").value);
+}
+
 function clearAllInput()
 {
     asali.temperature = 0.;
