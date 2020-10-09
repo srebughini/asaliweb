@@ -1,40 +1,100 @@
 <html>
-    
-    <head>
-        <script src="js/asali.js"></script>   
-    </head>
+	<head>
+		<link
+			rel="stylesheet"
+			href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+			integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p"
+			crossorigin="anonymous"
+		/>
+		<link rel="stylesheet" href="style.css" />
+		<script src="js/asali.js"></script>
+	</head>
 
+	<body>
+		<div class="container">
+			<form>
+				<div class="header">
+					<h1>Asali v1</h1>
+				</div>
+				<div class="form-control ">
+					<label for="Input_temperature">Temperature [K]:</label>
+					<input
+						type="text"
+						id="Input_temperature"
+						name="Input_temperature"
+						placeholder="K"
+						required
+					/>
+					<!-- <i class="fas fa-check-circle"></i>
+					<i class="fas fa-exclamation-circle"></i> -->
+				</div>
+				<div class="form-control">
+					<label for="Input_pressure">Pressure [Pa]:</label>
+					<input
+						type="text"
+						id="Input_pressure"
+						name="Input_pressure"
+						placeholder="Pa"
+						required
+					/>
+				</div>
+				<input
+					class="save-button"
+					type="button"
+					value="Save temperature and pressure"
+					onclick="saveTemperatureAndPressure()"
+				/>
 
-    <body>
-    <h1>Asali first version</h1>
+				<div class="form-control">
+					<label for="Input_name">Name:</label>
+					<input type="text" id="Input_name" placeholder="Name" name="Input_name" required />
+				</div>
 
-    <script src="js/asali_scripts.js"></script>
+				<div class="form-control">
+					<label for="Input_value">Mole Fraction:</label>
+					<input type="text" id="Input_value" placeholder="Mole Fraction" name="Input_value" required />
+				</div>
 
-    <form>
-        <label for="Input_temperature">Temperature [K]:</label>
-        <input type="text" id="Input_temperature" name="Input_temperature">
-        <br><br>
-        <label for="Input_pressure">Pressure [Pa]:</label>
-        <input type="text" id="Input_pressure" name="Input_pressure">
-        <br><br>
-        <input type="button" value="Save temperature and pressure" onclick="saveTemperatureAndPressure()"/>
-        <br><br>
-        <label for="Input_name">Name:</label>
-        <input type="text" id="Input_name" name="Input_name">
-        <label for="Input_value">Mole Fraction:</label>
-        <input type="text" id="Input_value" name="Input_value">
-        <input type="button" value="Add" onclick="addSpecies()"/>
-        <input type="button" value="Remove" onclick="removeSpecies()"/>
-        <br><br>
-        <input type="button" value="Clear specie data" onclick="cleanSpecies()"/>
-        <br><br>
-        <input type="button" value="Clear all input data" onclick="clearAllInput()"/>
-    </form>
+				<div class="button-group">
+					<input
+						class="button"
+						type="button"
+						value="Add"
+						onclick="addSpecies()"
+					/>
+					<input
+						class="button"
+						type="button"
+						value="Remove"
+						onclick="removeSpecies()"
+					/>
+					<input
+						class="button"
+						type="button"
+						value="Clear specie data"
+						onclick="cleanSpecies()"
+					/>
+					<input
+						class="button"
+						type="button"
+						value="Clear all input data"
+						onclick="clearAllInput()"
+					/>
+				</div>
+			</form>
+			<div class="rest">
+				<button type="button" onclick="showInput()">
+					Click to display saved input in Asali class
+				</button>
+				<p id="Temperature"></p>
+				<p id="Pressure"></p>
+				<p id="Names"></p>
+			</div>
+			<div class="footer">
+				<div>&copy; Made with 💙 by Stefano</div>
+			</div>
+		</div>
 
-    <button type="button" onclick="showInput()">Click me to display saved input in asali class.</button>
-    <p id="Temperature"></p>
-    <p id="Pressure"></p>
-    <p id="Names"></p>
-    
-    </body>
+		<script src="js/asali_scripts.js"></script>
+	</body>
 </html>
