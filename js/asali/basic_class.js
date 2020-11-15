@@ -1,10 +1,13 @@
 class Asali {
-    constructor() {
+    constructor(omega, thermo, transport) {
         this.temperature = 0.;
         this.pressure = 0.;
         this.x = [];
         this.y = [];
         this.names = [];
+        this.omega = omega;
+        this.thermo = thermo;
+        this.transport = transport;
     }
 
     reset()

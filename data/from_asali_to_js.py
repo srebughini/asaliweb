@@ -4,8 +4,8 @@ import os
 
 
 class FormatConverter:
-    def __init__(self, astar_path="astar.asali", omega22_path="omega22.asali",
-                 thermo_path="thermo.asali", transport_path="transport.asali"):
+    def __init__(self, astar_path="asali/astar.asali", omega22_path="asali/omega22.asali",
+                 thermo_path="asali/thermo.asali", transport_path="asali/transport.asali"):
         super().__init__()
         self.transport_dict = {}
         self.thermo_dict = {}
@@ -19,6 +19,12 @@ class FormatConverter:
     def _to_json(var_dict, file_path):
         with open(file_path, 'w') as f:
             json.dump(var_dict, f)
+
+    @staticmethod
+    def _to_js(var_dict, file_path, var_name):
+        js_var_as_string = "var " + var_name + " = " + json.dumps(var_dict)
+        with open(file_path, 'w') as f:
+            f.write(js_var_as_string)
 
     @staticmethod
     def _transport_file_parser(transport_path):
@@ -95,17 +101,17 @@ class FormatConverter:
         self.read_thermo()
         self.read_omega()
 
-    def save_transport(self, folder_path="", file_name="transport.json"):
+    def save_transport(self, folder_path="", file_name="transport.js"):
         file_path = os.path.join(folder_path, file_name)
-        self._to_json(self.transport_dict, file_path)
+        self._to_js(self.transport_dict, file_path, "transport")
 
-    def save_thermo(self, folder_path="", file_name="thermo.json"):
+    def save_thermo(self, folder_path="", file_name="thermo.js"):
         file_path = os.path.join(folder_path, file_name)
-        self._to_json(self.thermo_dict, file_path)
+        self._to_js(self.thermo_dict, file_path, "thermo")
 
-    def save_omega(self, folder_path="", file_name="omega.json"):
+    def save_omega(self, folder_path="", file_name="omega.js"):
         file_path = os.path.join(folder_path, file_name)
-        self._to_json(self.omega_dict, file_path)
+        self._to_js(self.omega_dict, file_path, "omega")
 
     def save_all(self, folder_path=""):
         self.save_omega(folder_path=folder_path)
