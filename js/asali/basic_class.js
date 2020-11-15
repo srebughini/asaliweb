@@ -1,23 +1,70 @@
 class Asali {
     constructor(omega, thermo, transport) {
-        this.temperature = 0.;
-        this.pressure = 0.;
-        this.x = [];
-        this.y = [];
-        this.names = [];
+        this.reset();
         this.omega = omega;
         this.thermo = thermo;
         this.transport = transport;
+
+        //Force definition for testing
+        this.T = 393.15
+        this.P = 4e05
+        this.x = [0.1, 0.2, 0.7];
+        this.names = ["H2", "O2", "N2"];
+        this.extract_transport_properties("mole");
+        this.rho = this.get_mixture_density();
+        alert(this.rho)
     }
 
     reset()
     {
-        this.temperature = 0.;
-        this.pressure = 0.;
+        this.T = 0.;
+        this.P = 0.;
+        this.MWmix = 0.
+
         this.x = [];
         this.y = [];
+        this.MW = [];
         this.names = [];
+
+        //Bool to reduce calculations
+        this.rho_updated_ = false
     }
+
+    extract_transport_properties(input_type)
+    {
+        for (let i=0; i<this.names.length; i++)
+        {
+            this.MW.push(this.transport[this.names[i]][6])
+        }
+        
+        if (input_type == "mole")
+        {
+            this.MWmix = 0.;
+            for (let i=0; i<this.names.length; i++)
+            {
+                this.MWmix = this.MWmix + this.x[i]*this.MW[i];
+            }
+
+            for (let i=0; i<this.names.length; i++)
+            {
+                this.y[i] = this.x[i]*this.MW[i]/this.MWmix;
+            }
+        }
+        else
+        {
+            this.MWmix = 0.;
+            for (let i=0; i<this.names.length; i++)
+            {
+                this.MWmix = this.MWmix + this.y[i]/this.MW[i];
+            }
+
+            for (let i=0; i<this.names.length; i++)
+            {
+                this.x[i] = this.y[i]/this.MW[i]/this.MWmix;
+            }
+        }
+    }
+
 
     addMassFraction(name, y)
     {
@@ -74,6 +121,7 @@ class Asali {
                 this.y.push(y[i]);
                 this.names.push(names[i]);
             }
+            this.extract_transport_properties("mass");
         }
     }
 
@@ -92,6 +140,18 @@ class Asali {
                 this.x.push(x[i]);
                 this.names.push(names[i]);
             }
+            this.extract_transport_properties("mole");
         }
     }
+
+    get_mixture_density()
+    {
+        if (this.rho_updated_ == false)
+        {
+            this.rho = this.P*this.MWmix/(8314.*this.T);
+            this.rho_updated_ = true;
+        }
+        return this.rho
+    }
+
 }

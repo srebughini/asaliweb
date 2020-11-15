@@ -2,8 +2,8 @@ asali = new Asali(omega, thermo, transport);
 
 function saveTemperatureAndPressure()
 {
-    asali.temperature = document.getElementById("Input_temperature").value;
-    asali.pressure = document.getElementById("Input_pressure").value;
+    asali.T = document.getElementById("Input_temperature").value;
+    asali.P = document.getElementById("Input_pressure").value;
 }
 
 function addSpecies()
@@ -18,8 +18,8 @@ function removeSpecies()
 
 function clearAllInput()
 {
-    asali.temperature = 0.;
-    asali.pressure = 0.;
+    asali.T = 0.;
+    asali.P = 0.;
     cleanSpecies();
 }
 
@@ -31,8 +31,8 @@ function cleanSpecies()
 
 function showInput()
 {
-    document.getElementById('Temperature').innerHTML = asali.temperature;
-    document.getElementById('Pressure').innerHTML = asali.pressure;
+    document.getElementById('Temperature').innerHTML = asali.T;
+    document.getElementById('Pressure').innerHTML = asali.P;
 
     let e = "<hr/>";   
     
