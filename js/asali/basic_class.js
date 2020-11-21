@@ -1,13 +1,14 @@
 class Asali {
     constructor(omega, thermo, transport) {
         this.reset_properties();
-        this.reset_bools
+        this.reset_bools();
         this.omega_ = omega;
         this.thermo_ = thermo;
         this.transport_ = transport;
         this.pi_ = 3.14159265358979323846;
 
         //Force definition for testing
+        /*
         this.T = 393.15
         this.P = 4e05
         this.x = [0.1, 0.2, 0.7];
@@ -16,18 +17,47 @@ class Asali {
         this.get_mixture_density();
         this.get_species_viscosity();
         this.get_binary_diffusion();
-        this.get_species_specific_heat();
+        this.get_species_mass_specific_heat();
+        this.get_species_thermal_conducitivity();
+        this.get_species_mass_enthalpy();
+        this.get_species_mass_entropy();
+        this.get_mixture_thermal_conductivity();
+        this.get_mixture_viscosity();
+        this.get_mixture_diffusion();
+        this.get_species_arithmetic_mean_gas_velocity();
+        this.get_species_mean_free_path();
+        this.get_mixture_mass_specific_heat();
+        this.get_mixture_mass_enthalpy();
+        this.get_mixture_mass_entropy();
         console.log(this.rho);
         console.log(this.mu);
         console.log(this.diff);
         console.log(this.cpmass);
-        console.log(this.cpmole);
+        console.log(this.cond);
+        console.log(this.hmass);
+        console.log(this.smole);
+        console.log(this.cond_mix);
+        console.log(this.mu_mix);
+        console.log(this.diff_mix);
+        console.log(this.v);
+        console.log(this.l);
+        console.log(this.cpmass_mix);
+        console.log(this.hmass_mix);
+        console.log(this.smass_mix);*/
     }
 
     reset_properties() {
         this.T = 0.;
         this.P = 0.;
-        this.MWmix = 0.
+        this.MWmix = 0.;
+        this.cond_mix = 0.;
+        this.mu_mix = 0.;
+        this.cpmole_mix = 0.;
+        this.cpmass_mix = 0.;
+        this.hmole_mix = 0.;
+        this.hmass_mix = 0.;
+        this.smole_mix = 0.;
+        this.smass_mix = 0.;
 
         this.names = [];
 
@@ -38,8 +68,16 @@ class Asali {
         this.diff = [];
         this.cpmass = [];
         this.cpmole = [];
+        this.hmass = [];
+        this.hmole = [];
+        this.smass = [];
+        this.smole = [];
+        this.cond = [];
         this.low = [];
         this.high = [];
+        this.diff_mix = [];
+        this.v = [];
+        this.l = [];
 
         this.geometry = [];
         this.LJpotential = [];
@@ -56,6 +94,17 @@ class Asali {
         this.mu_updated_ = false;
         this.diff_updated_ = false;
         this.cp_update_ = false;
+        this.h_update_ = false;
+        this.s_update_ = false;
+        this.cond_update_ = false;
+        this.v_update_ = false;
+        this.l_update_ = false;
+        this.cond_mix_update_ = false;
+        this.mu_mix_update_ = false;
+        this.diff_mix_update_ = false;
+        this.cp_mix_update_ = false;
+        this.h_mix_update_ = false;
+        this.s_mix_update_ = false;
     }
 
     initialize_properties_from_data(input_type) {
@@ -75,6 +124,14 @@ class Asali {
             this.mu.push(0.);
             this.cpmass.push(0.);
             this.cpmole.push(0.);
+            this.hmass.push(0.);
+            this.hmole.push(0.);
+            this.smass.push(0.);
+            this.smole.push(0.);
+            this.cond.push(0.);
+            this.v.push(0.);
+            this.l.push(0.);
+            this.diff_mix.push(0.);
             this.diff.push(new Array(this.names.length));
         }
 
@@ -228,6 +285,141 @@ class Asali {
         }
     }
 
+    setTemperature(T) {
+        if (this.T != T) {
+            this.T = T;
+            this.reset_bools();
+        }
+    }
+
+    setPressure(P) {
+        if (this.P != P) {
+            this.P = P;
+            this.reset_bools();
+        }
+    }
+
+    calculate_specific_heat() {
+        if (this.cp_update_ == false) {
+            for (let i = 0; i < this.names.length; i++) {
+                if (this.T < 1000.) {
+                    this.cpmole[i] = this.low[i][0]
+                        + this.low[i][1] * this.T
+                        + this.low[i][2] * Math.pow(this.T, 2.)
+                        + this.low[i][3] * Math.pow(this.T, 3.)
+                        + this.low[i][4] * Math.pow(this.T, 4.);
+                }
+                else {
+                    this.cpmole[i] = this.high[i][0]
+                        + this.high[i][1] * this.T
+                        + this.high[i][2] * Math.pow(this.T, 2.)
+                        + this.high[i][3] * Math.pow(this.T, 3.)
+                        + this.high[i][4] * Math.pow(this.T, 4.);
+                }
+
+                this.cpmole[i] = this.cpmole[i] * 8314.;  //J/Kmol/K
+                this.cpmass[i] = this.cpmole[i] / this.MW[i]; //J/Kg/K
+            }
+            this.cp_update_ = true;
+        }
+    }
+
+    calculate_enthalpy() {
+        if (this.h_update_ == false) {
+            for (let i = 0; i < this.names.length; i++) {
+                if (this.T < 1000.) {
+                    this.hmole[i] = this.low[i][0]
+                        + this.low[i][1] * this.T / 2.
+                        + this.low[i][2] * Math.pow(this.T, 2.) / 3.
+                        + this.low[i][3] * Math.pow(this.T, 3.) / 4.
+                        + this.low[i][4] * Math.pow(this.T, 4.) / 5.
+                        + this.low[i][5] / this.T;
+                }
+                else {
+                    this.hmole[i] = this.high[i][0]
+                        + this.high[i][1] * this.T / 2.
+                        + this.high[i][2] * Math.pow(this.T, 2.) / 3.
+                        + this.high[i][3] * Math.pow(this.T, 3.) / 4.
+                        + this.high[i][4] * Math.pow(this.T, 4.) / 5.
+                        + this.high[i][5] / this.T;
+                }
+
+                this.hmole[i] = this.hmole[i] * 8314. * this.T;  //J/Kmol
+                this.hmass[i] = this.hmole[i] / this.MW[i]; //J/Kg
+            }
+            this.h_update_ = true;
+        }
+    }
+
+    calculate_entropy() {
+        if (this.s_update_ == false) {
+            for (let i = 0; i < this.names.length; i++) {
+                if (this.T < 1000.) {
+                    this.smole[i] = this.low[i][0] * Math.log(this.T)
+                        + this.low[i][1] * this.T
+                        + this.low[i][2] * Math.pow(this.T, 2.) / 2.
+                        + this.low[i][3] * Math.pow(this.T, 3.) / 3.
+                        + this.low[i][4] * Math.pow(this.T, 4.) / 4.
+                        + this.low[i][6];
+                }
+                else {
+                    this.smole[i] = this.high[i][0] * Math.log(this.T)
+                        + this.high[i][1] * this.T
+                        + this.high[i][2] * Math.pow(this.T, 2.) / 2.
+                        + this.high[i][3] * Math.pow(this.T, 3.) / 3.
+                        + this.high[i][4] * Math.pow(this.T, 4.) / 4.
+                        + this.high[i][6];
+                }
+
+                this.smole[i] = this.smole[i] * 8314.;  //J/Kmol/K
+                this.smass[i] = this.smole[i] / this.MW[i]; //J/Kg/K
+            }
+            this.s_update_ = true;
+        }
+    }
+
+    calculate_mixture_specific_heat() {
+        if (this.cp_mix_update_ == false) {
+            this.calculate_specific_heat();
+            this.cpmole_mix = 0;
+            this.cpmass_mix = 0;
+
+            for (let i = 0; i < this.names.length; i++) {
+                this.cpmole_mix = this.cpmole_mix + this.x[i] * this.cpmole[i];
+                this.cpmass_mix = this.cpmass_mix + this.y[i] * this.cpmass[i];
+            }
+            this.cp_mix_update_ = true;
+        }
+    }
+
+    calculate_mixture_enthalpy() {
+        if (this.h_mix_update_ == false) {
+            this.calculate_enthalpy();
+            this.hmole_mix = 0;
+            this.hmass_mix = 0;
+
+            for (let i = 0; i < this.names.length; i++) {
+                this.hmole_mix = this.hmole_mix + this.x[i] * this.hmole[i];
+                this.hmass_mix = this.hmass_mix + this.y[i] * this.hmass[i];
+            }
+            this.h_mix_update_ = true;
+        }
+    }
+
+    calculate_mixture_entropy() {
+        if (this.s_mix_update_ == false) {
+            this.calculate_entropy();
+            this.smole_mix = 0;
+            this.smass_mix = 0;
+
+            for (let i = 0; i < this.names.length; i++) {
+                this.smole_mix = this.smole_mix + this.x[i] * this.smole[i];
+                this.smass_mix = this.smass_mix + this.y[i] * this.smass[i];
+            }
+            this.s_mix_update_ = true;
+        }
+    }
+
     get_mixture_density() {
         if (this.rho_updated_ == false) {
             this.rho = this.P * this.MWmix / (8314. * this.T);
@@ -266,7 +458,6 @@ class Asali {
             var sigma = 0.;
             var Tr = 0.;
             var dr = 0.;
-            var diff = 0.;
 
             for (let i = 0; i < this.names.length; i++) {
                 for (let j = 0; j < i; j++) {
@@ -318,28 +509,208 @@ class Asali {
         return this.diff;
     }
 
-    get_species_specific_heat() {
-        if (this.cp_update_ == false) {
+    get_species_molar_specific_heat() {
+        this.calculate_specific_heat();
+        return this.cpmole;
+    }
+
+    get_species_mass_specific_heat() {
+        this.calculate_specific_heat();
+        return this.cpmass;
+    }
+
+    get_species_thermal_conducitivity() {
+        if (this.cond_update_ == false) {
+            this.get_species_viscosity();
+            this.get_binary_diffusion();
+            this.get_mixture_density();
+            this.calculate_specific_heat();
+
+            var cvtrans = 0.;
+            var cvrot = 0.;
+            var cvvib = 0.;
+            var rho = 0.;
+            var A = 0.;
+            var B = 0.;
+            var F_T = 0.;
+            var F_298 = 0.;
+            var Zrot = 0.;
+            var ftrans = 0.;
+            var frot = 0.;
+            var fvib = 0.;
+
+            var R = 8314; //[J/Kmol/K]
+
             for (let i = 0; i < this.names.length; i++) {
-                if (this.T < 1000.) {
-                    this.cpmole[i] = this.low[i][0]
-                        + this.low[i][1] * this.T
-                        + this.low[i][2] * Math.pow(this.T, 2.)
-                        + this.low[i][3] * Math.pow(this.T, 3.)
-                        + this.low[i][4] * Math.pow(this.T, 4.);
+                if (this.geometry[i] == 0) //single atom
+                {
+                    cvtrans = 3. * R * 0.5;
+                    cvrot = 0.;
+                    cvvib = 0.;
                 }
-                else {
-                    this.cpmole[i] = this.high[i][0]
-                        + this.high[i][1] * this.T
-                        + this.high[i][2] * Math.pow(this.T, 2.)
-                        + this.high[i][3] * Math.pow(this.T, 3.)
-                        + this.high[i][4] * Math.pow(this.T, 4.);
+                else if (this.geometry[i] == 1) //linear
+                {
+                    cvtrans = 3. * R * 0.5;
+                    cvrot = R;
+                    cvvib = this.cpmole[i] - R - 5. * R * 0.5;
+                }
+                else //non linear
+                {
+                    cvtrans = 3. * R * 0.5;
+                    cvrot = 3. * R * 0.5;
+                    cvvib = this.cpmole[i] - R - 3. * R;
                 }
 
-                this.cpmole[i] = this.cpmole[i] * 8314.;  //J/Kmol/K
-                this.cpmass[i] = this.cpmole[i] / this.MW[i]; //J/Kg/K
+                rho = this.P * this.MW[i] / (R * this.T);
+                A = (5. / 2.) - rho * this.diff[i][i] / this.mu[i];
+
+                F_T = 1. + 0.5 * Math.sqrt(Math.pow(this.pi_, 3.) * this.LJpotential[i] / this.T)
+                    + (0.25 * Math.pow(this.pi_, 2.) + 2.) * (this.LJpotential[i] / this.T)
+                    + Math.sqrt(Math.pow(this.pi_ * this.LJpotential[i] / this.T, 3.));
+                F_298 = 1. + 0.5 * Math.sqrt(Math.pow(this.pi_, 3.) * this.LJpotential[i] / 298.)
+                    + (0.25 * Math.pow(this.pi_, 2.) + 2.) * (this.LJpotential[i] / 298.)
+                    + Math.sqrt(Math.pow(this.pi_ * this.LJpotential[i] / 298., 3.));
+
+                Zrot = this.collision[i] * F_298 / F_T;
+                B = Zrot + (2 / this.pi_) * ((5 / 3) * (cvrot / R) + rho * this.diff[i][i] / this.mu[i]);
+
+                ftrans = (5 / 2) * (1 - 2 * cvrot * A / (this.pi_ * cvtrans * B));
+                frot = (rho * this.diff[i][i] / this.mu[i]) * (1. + 2. * A / (this.pi_ * B));
+                fvib = rho * this.diff[i][i] / this.mu[i];
+
+                this.cond[i] = this.mu[i] * (ftrans * cvtrans + frot * cvrot + fvib * cvvib) / this.MW[i];
+
             }
-            this.cp_update_ = true;
+            this.cond_update_ = true;
         }
+        return this.cond;
     }
+
+    get_species_molar_enthalpy() {
+        this.calculate_enthalpy();
+        return this.hmole;
+    }
+
+    get_species_mass_enthalpy() {
+        this.calculate_enthalpy();
+        return this.hmass;
+    }
+
+    get_species_molar_entropy() {
+        this.calculate_entropy();
+        return this.smole;
+    }
+
+    get_species_mass_entropy() {
+        this.calculate_entropy();
+        return this.smass;
+    }
+
+    get_species_arithmetic_mean_gas_velocity() {
+        if (this.v_update_ == false) {
+            for (let i = 0; i < this.names.length; i++) {
+                this.v[i] = Math.sqrt(8 * 8314 * this.T / (this.pi_ * this.MW[i]));
+            }
+            this.v_update_ = true;
+        }
+        return this.v;
+    }
+
+    get_species_mean_free_path() {
+        if (this.l_update_ == false) {
+            for (let i = 0; i < this.names.length; i++) {
+                this.l[i] = 1.38064852 * 1e-03 * this.T / (Math.sqrt(2) * this.P * Math.pow(this.LJdiameter[i], 2.));
+            }
+            this.l_update_ = true;
+        }
+
+        return this.l;
+    }
+
+    get_mixture_thermal_conductivity() {
+        if (this.cond_mix_update_ == false) {
+            this.get_species_thermal_conducitivity();
+            var A = 0.;
+            var B = 0.;
+            for (let i = 0; i < this.names.length; i++) {
+                A = A + this.x[i] * this.cond[i];
+                B = B + this.x[i] / this.cond[i];
+            }
+
+            this.cond_mix = 0.5 * (A + 1. / B);
+            this.cond_mix_update_ = true;
+        }
+        return this.cond_mix_;
+    }
+
+    get_mixture_viscosity() {
+        if (this.mu_mix_update_ == false) {
+            this.get_species_viscosity();
+            this.mu_mix = 0.;
+            var sum = 0.;
+            var phi = 0.;
+            for (let k = 0; k < this.names.length; k++) {
+                sum = 0.;
+                for (let j = 0; j < this.names.length; j++) {
+                    phi = (1. / Math.sqrt(8.)) * (1. / Math.sqrt(1. + this.MW[k] / this.MW[j])) * Math.pow((1. + Math.sqrt(this.mu[k] / this.mu[j]) * Math.pow(this.MW[j] / this.MW[k], (1. / 4.))), 2.);
+                    sum = sum + this.x[j] * phi;
+                }
+                this.mu_mix = this.mu_mix + this.x[k] * this.mu[k] / sum;
+            }
+            this.mu_mix_update_ = true;
+        }
+
+        return this.mu_mix;
+    }
+
+    get_mixture_diffusion() {
+        if (this.diff_mix_update_ == false) {
+            this.get_binary_diffusion();
+            for (let k = 0; k < this.names.length; k++) {
+                var A = 0;
+                var B = 0;
+                for (let j = 0; j < this.names.length; j++) {
+                    if (j != k) {
+                        A = A + this.x[j] * this.MW[j];
+                        B = B + this.x[j] / this.diff[j][k];
+                    }
+                }
+                this.diff_mix[k] = A / (this.MWmix * B);
+            }
+            this.diff_mix_update_ = true;
+        }
+
+        return this.diff_mix_;
+    }
+
+    get_mixture_molar_specific_heat() {
+        this.calculate_mixture_specific_heat();
+        return this.cpmole_mix;
+    }
+
+    get_mixture_mass_specific_heat() {
+        this.calculate_mixture_specific_heat();
+        return this.cpmass_mix;
+    }
+
+    get_mixture_molar_enthalpy() {
+        this.calculate_mixture_enthalpy();
+        return this.hmole_mix;
+    }
+
+    get_mixture_mass_enthalpy() {
+        this.calculate_mixture_enthalpy();
+        return this.hmass_mix;
+    }
+
+    get_mixture_molar_entropy() {
+        this.calculate_mixture_entropy();
+        return this.smole_mix;
+    }
+
+    get_mixture_mass_entropy() {
+        this.calculate_mixture_entropy();
+        return this.smass_mix;
+    }
+
 }
