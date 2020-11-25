@@ -38,34 +38,70 @@
                         C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5
                         C139.8,137.7 141.6,141.9 141.8,141.8 Z"
 					fill="#ffffff"
-				></path></svg
-		></a>
+				></path>
+			</svg>
+		</a>
 		<div class="container">
 			<form>
 				<div class="header">
 					<h1>Asali v1</h1>
 				</div>
 				<div class="form-control">
-					<label for="Input_temperature">Temperature [K]:</label>
-					<input
-						type="text"
-						id="Input_temperature"
-						name="Input_temperature"
-						placeholder="K"
-						required
-					/>
+					<label for="Input_temperature">Temperature:</label>
+					<div class="coupled">
+						<input
+							type="text"
+							id="Input_temperature"
+							name="Input_temperature"
+							placeholder="Input Temperature"
+							required
+						/>
+
+						<select
+							class="input-select"
+							type=""
+							name="Temp Unit"
+							id="temp-unit"
+							value=""
+							required
+						>
+							<option value="temp-unit-1">K</option>
+							<option value="temp-unit-2">&deg;C</option>
+							<option value="temp-unit-3">&deg;F</option>
+						</select>
+					</div>
 					<!-- <i class="fas fa-check-circle"></i>
 					<i class="fas fa-exclamation-circle"></i> -->
 				</div>
 				<div class="form-control">
-					<label for="Input_pressure">Pressure [Pa]:</label>
-					<input
-						type="text"
-						id="Input_pressure"
-						name="Input_pressure"
-						placeholder="Pa"
-						required
-					/>
+					<label for="Input_pressure">Pressure:</label>
+					<div class="coupled">
+						<input
+							type="text"
+							id="Input_pressure"
+							name="Input_pressure"
+							placeholder="Input pressure"
+							required
+						/>
+						<select
+							class="input-select"
+							type=""
+							name="Pressure Uni"
+							id="pressure-unit"
+							value=""
+							required
+						>
+							<option value="pressure-unit-1">Pa</option>
+							<option value="pressure-unit-2">psi</option>
+							<option value="pressure-unit-3">Ba</option>
+							<option value="pressure-unit-4">
+								lbf/in<sup>2</sup>
+							</option>
+							<option value="pressure-unit-5">
+								kgf/cm<sup>2</sup>
+							</option>
+						</select>
+					</div>
 				</div>
 				<input
 					class="save-button"
