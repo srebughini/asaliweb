@@ -27,21 +27,27 @@ body {
 	border-radius: 5px;
 	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 	overflow: hidden;
-	width: 450px;
-	max-width: 100%;
+	width: 60vw;
+	max-width: 600px;
 	display: flex;
 	flex-direction: column;
+	zoom: 1;
 }
 
 .header {
 	border-bottom: 1px solid #f0f0f0;
 	background-color: #10253f;
 	color: #fff;
-	padding: 20px 150px;
+	padding: 20px 0px;
+	text-align: center;
+	display: grid;
+	place-items: center;
+	place-content: center;
 }
 
 .header h1 {
-	margin: 0;
+	margin: 0 auto;
+	width: fit-content;
 }
 
 .form {
@@ -154,4 +160,19 @@ button:hover {
 	margin: auto;
 	font-weight: 600;
 	padding-bottom: 20px;
+}
+
+@media only screen and (max-width: 768px) {
+	.container {
+		zoom: 1.2;
+	}
+
+	.button-group {
+		flex-direction: column;
+	}
+
+	.header h1 {
+		width: max-content;
+		font-size: 1.5rem;
+	}
 }
