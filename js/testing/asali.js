@@ -1,3 +1,25 @@
+function loadJSON(jsonFilePath) {   
+
+    let requestObj = new XMLHttpRequest();
+    let parsedJson = {}
+    requestObj.overrideMimeType("application/json");
+    requestObj.open('GET', jsonFilePath, true);
+
+    console.log(requestObj);
+
+    console.log(requestObj.readyState);
+    console.log(requestObj.status);
+
+    /*console.log(callback(requestObj.responseText));
+
+    if (requestObj.readyState == 4 && requestObj.status == "200") {
+    parsedJson = JSON.parse(requestObj.responseText);
+    }
+    requestObj.send(null);
+    return parsedJson;*/
+ }
+
+/*
 const Fractions = Object.freeze({ MOLE: "mole", MASS: "mass" });
 
 const ThermoParameters = (coefficientArray) => {
@@ -147,8 +169,33 @@ const GasMixture = ({ gasState, mixtureComposition }) => {
 
     return {}
 }
+*/
+
+/*
+function init() {
+    loadJSON(function(response) {
+     // Parse JSON string into object
+        console.log(response);
+       var actual_JSON = JSON.parse(response);
+       console.log(actual_JSON);
+    });
+   }
+
+   init();
+*/
+
+var a = loadJSON("js/testing/data/omega.json");
+
+console.log(a);
+
+//var actual_JSON = JSON.parse(a);
+
+//console.log(actual_JSON)
 
 
+
+
+/*
 thermo = ThermoParameters([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17])
 transport = TransportParameters({ geometry: 1, LJpotential: 2, LJdiameter: 3, dipole: 2, polar: 0 })
 
@@ -162,3 +209,4 @@ compositions = GasMixtureComposition([{ "specie": h2_gas, "value": 0.1 }, { "spe
 
 
 mixture = GasMixture({ gasState: state, mixtureComposition: compositions })
+*/

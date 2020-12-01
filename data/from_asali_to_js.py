@@ -101,6 +101,7 @@ class FormatConverter:
         self.read_thermo()
         self.read_omega()
 
+    """
     def save_transport(self, folder_path="", file_name="transport.js"):
         file_path = os.path.join(folder_path, file_name)
         self._to_js(self.transport_dict, file_path, "transport")
@@ -112,6 +113,19 @@ class FormatConverter:
     def save_omega(self, folder_path="", file_name="omega.js"):
         file_path = os.path.join(folder_path, file_name)
         self._to_js(self.omega_dict, file_path, "omega")
+    """
+    def save_transport(self, folder_path="", file_name="transport.json"):
+        file_path = os.path.join(folder_path, file_name)
+        self._to_json(self.transport_dict, file_path)
+
+    def save_thermo(self, folder_path="", file_name="thermo.json"):
+        file_path = os.path.join(folder_path, file_name)
+        self._to_json(self.thermo_dict, file_path)
+
+    def save_omega(self, folder_path="", file_name="omega.json"):
+        file_path = os.path.join(folder_path, file_name)
+        self._to_json(self.omega_dict, file_path)
+
 
     def save_all(self, folder_path=""):
         self.save_omega(folder_path=folder_path)
