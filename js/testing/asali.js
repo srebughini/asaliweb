@@ -40,17 +40,30 @@ function loadJsonFile(url, callback /*, opt_arg1, opt_arg2, ... */) {
     xhr.send(null);
 }
 
+async function loadJson(url)
+{
+    const resp = await fetch(url);
+    const jsonData = await resp.json();
+    console.log(jsonData);
+    return jsonData;
+}
+
+loadJson(THERMO_FILE_PATH);
+
 const Fractions = Object.freeze({ MOLE: "mole", MASS: "mass" });
 
 const ThermoParameters = () => {
-    let _thermoDict = {}
+    let _thermoDict = loadJson(THERMO_FILE_PATH);
 
-    loadJsonFile(THERMO_FILE_PATH, _setThermoDict);
+    console.log(_thermoDict)
 
-    function _setThermoDict()
+    //loadJsonFile(THERMO_FILE_PATH, _setThermoDict);
+
+    /*function _setThermoDict()
     {
-        _thermoDict = this.responseText;
-    }
+        _thermoDict = JSON.parse(this.responseText);
+        console.log(_thermoDict);
+    }*/
 
     function getHighTemperatureCoefficients(gasSpecieName) {
         return _thermoDict[gasSpecieName].slice(0, 7);
@@ -69,7 +82,7 @@ const TransportParameters = () => {
     
     function _setTransportDict()
     {
-        _transportDict = this.responseText;
+        _transportDict = JSON.parse(this.responseText);
     }
 
     async function getGeometry(gasSpecieName) {
