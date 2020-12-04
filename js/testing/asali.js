@@ -1,69 +1,7 @@
-var OMEGA_FILE_PATH = "js/testing/data/omega.json"
-var THERMO_FILE_PATH = "js/testing/data/thermo.json"
-var TRANSPORT_FILE_PATH = "js/testing/data/transport.json"
-
-/*
-function loadJsonFile(callback, jsonFilePath) {
-    let requestObj = new XMLHttpRequest();
-    requestObj.overrideMimeType("application/json");
-    requestObj.open('GET', jsonFilePath, true);
-    requestObj.onload = function (e) {
-        if (requestObj.readyState === 4) {
-          if (requestObj.status === 200) {
-            callback(requestObj.responseText);
-          } else {
-            console.error(requestObj.statusText);
-          }
-        }
-      };
-      requestObj.onerror = function (e) {
-        console.error(requestObj.statusText);
-      };
-
-    requestObj.send(null);
-    //return JSON.parse(requestObj.responseText);
-}
-
-function stringToJson(message) {
-    return JSON.parse(this.responseText);
-}
-*/
-
-function loadJsonFile(url, callback /*, opt_arg1, opt_arg2, ... */) {
-    var xhr = new XMLHttpRequest();
-    xhr.overrideMimeType("application/json");
-    xhr.callback = callback;
-    xhr.arguments = Array.prototype.slice.call(arguments, 2);
-    xhr.onload = function () { this.callback.apply(this, this.arguments); };
-    xhr.onerror = function () { console.error(this.statusText); };
-    xhr.open("GET", url, true);
-    xhr.send(null);
-}
-
-async function loadJson(url)
-{
-    const resp = await fetch(url);
-    const jsonData = await resp.json();
-    console.log(jsonData);
-    return jsonData;
-}
-
-loadJson(THERMO_FILE_PATH);
-
 const Fractions = Object.freeze({ MOLE: "mole", MASS: "mass" });
 
 const ThermoParameters = () => {
-    let _thermoDict = loadJson(THERMO_FILE_PATH);
-
-    console.log(_thermoDict)
-
-    //loadJsonFile(THERMO_FILE_PATH, _setThermoDict);
-
-    /*function _setThermoDict()
-    {
-        _thermoDict = JSON.parse(this.responseText);
-        console.log(_thermoDict);
-    }*/
+    let _thermoDict = thermoDict;
 
     function getHighTemperatureCoefficients(gasSpecieName) {
         return _thermoDict[gasSpecieName].slice(0, 7);
@@ -73,43 +11,37 @@ const ThermoParameters = () => {
         return _thermoDict[gasSpecieName].slice(7, 14);
     }
 
-    return { getHighTemperatureCoefficients, getLowTemperatureCoefficients }
+    return {getHighTemperatureCoefficients, getLowTemperatureCoefficients }
 }
 
 const TransportParameters = () => {
-    let _transportDict = {}
-    loadJsonFile(TRANSPORT_FILE_PATH, _setTransportDict);
-    
-    function _setTransportDict()
-    {
-        _transportDict = JSON.parse(this.responseText);
-    }
+    let _transportDict = transportDict;
 
-    async function getGeometry(gasSpecieName) {
+    function getGeometry(gasSpecieName) {
         return _transportDict[gasSpecieName][0];
     }
 
-    async function getLJpotential(gasSpecieName) {
+    function getLJpotential(gasSpecieName) {
         return _transportDict[gasSpecieName][1];
     }
 
-    async function getLJdiameter(gasSpecieName) {
+    function getLJdiameter(gasSpecieName) {
         return _transportDict[gasSpecieName][2];
     }
 
-    async function getDipole(gasSpecieName) {
+    function getDipole(gasSpecieName) {
         return _transportDict[gasSpecieName][3];
     }
 
-    async function getPolar(gasSpecieName) {
+    function getPolar(gasSpecieName) {
         return _transportDict[gasSpecieName][4];
     }
 
-    async function getCollision(gasSpecieName) {
+    function getCollision(gasSpecieName) {
         return _transportDict[gasSpecieName][5];
     }
 
-    async function getMolecularWeight(gasSpecieName) {
+    function getMolecularWeight(gasSpecieName) {
         return _transportDict[gasSpecieName][6];
     }
 
@@ -252,10 +184,6 @@ const GasMixture = ({ gasState, mixtureComposition }) => {
 thermo = ThermoParameters()
 transport = TransportParameters()
 
-
-console.log(thermo.getHighTemperatureCoefficients("H2"))
-
-/*
 h2_gas = GasSpecie({ name: "H2", thermoParameters: thermo, transportParameters: transport })
 o2_gas = GasSpecie({ name: "O2", thermoParameters: thermo, transportParameters: transport })
 n2_gas = GasSpecie({ name: "N2", thermoParameters: thermo, transportParameters: transport })
@@ -269,5 +197,4 @@ state = GasState({ temperature: 298.15, pressure: 101325 })
 
 compositions = GasMixtureComposition([{ "specie": h2_gas, "value": 0.1 }, { "specie": o2_gas, "value": 0.2 }, { "specie": n2_gas, "value": 0.7 }], "mole")
 
-
-mixture = GasMixture({ gasState: state, mixtureComposition: compositions })*/
+mixture = GasMixture({ gasState: state, mixtureComposition: compositions })
