@@ -1,4 +1,4 @@
-var omegaDict = {
+let omegaDict = {
     "11": {
         "d": [
             0,
@@ -846,3 +846,58 @@ var omegaDict = {
         ]
     }
 }
+
+function findLowerAndUpperIndex(value, array)
+{
+    if (value < array[0])
+    {
+        return [0,1]
+    }
+    else if ( value > array[value.length - 1])
+    {
+        return [value.length - 2, value.length - 1]
+    }
+    else
+    {
+        for (let i = 0; i < array.length - 1; i++)
+        {
+            if (value >= array[i] && value < array[i + 1]) {
+                return [i, i+1]
+            }
+        }
+    }
+}
+
+function collisionIntegralsEvaluation(omega, tr, dr) {
+    let Ta = 0;
+    let Tb = 0;
+    let da = 0;
+    let db = 0;
+
+    [Ta, Tb] = findLowerAndUpperIndex(tr, omega.t);
+    [da, db] = findLowerAndUpperIndex(dr, omega.d);
+
+    let b = [0., 0., 0., 0.];
+    b[0] = omega.matrix[Ta][da];
+    b[1] = omega.matrix[Ta][db];
+    b[2] = omega.matrix[Tb][da];
+    b[3] = omega.matrix[Tb][db];
+
+    let x = [0., 0., 0., 0.];
+    x[3] = (b[0] - b[1] - b[2] + b[3]) / (omega.t[Ta] * omega.d[da] - omega.t[Ta] * omega.d[db] - omega.t[Tb] * omega.d[da] + omega.t[Tb] * omega.d[db]);
+    x[2] = (-x[3] * (omega.t[Ta] * omega.d[da] - omega.t[Ta] * omega.d[db]) - b[1] + b[0]) / (omega.d[da] - omega.d[db]);
+    x[1] = (-x[3] * (omega.t[Ta] * omega.d[da] - omega.t[Tb] * omega.d[da]) - b[2] + b[0]) / (omega.t[Ta] - omega.t[Tb]);
+    x[0] = -x[1] * omega.t[Ta] - x[2] * omega.d[da] - x[3] * omega.t[Ta] * omega.d[da] + b[0];
+
+    return x[0] + x[1] * tr + x[2] * dr + x[3] * tr * dr;
+}
+
+export function CollisionIntegral11(tr, dr) {
+    return collisionIntegralsEvaluation(omegaDict["11"], tr, dr)
+}
+
+export function CollisionIntegral22(tr, dr) {
+    return collisionIntegralsEvaluation(omegaDict["22"], tr, dr)
+}
+
+

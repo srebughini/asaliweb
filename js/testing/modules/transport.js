@@ -1,3 +1,5 @@
+import {AsaliError} from "./utils.js"
+
 let transportDict = {
     "AC3H4": [
         1,
@@ -4358,7 +4360,7 @@ export default function TransportParameters() {
         }
         catch (error) {
             console.log(error);
-            alert("Unknwon species name: " + gasSpecieName)
+            AsaliError("Unknwon species name: " + gasSpecieName)
         }
     }
 
@@ -4368,7 +4370,7 @@ export default function TransportParameters() {
         }
         catch (error) {
             console.log(error);
-            alert("Unknwon species name: " + gasSpecieName)
+            AsaliError("Unknwon species name: " + gasSpecieName)
         }
     }
 
@@ -4378,7 +4380,7 @@ export default function TransportParameters() {
         }
         catch (error) {
             console.log(error);
-            alert("Unknwon species name: " + gasSpecieName)
+            AsaliError("Unknwon species name: " + gasSpecieName)
         }
     }
 
@@ -4388,7 +4390,7 @@ export default function TransportParameters() {
         }
         catch (error) {
             console.log(error);
-            alert("Unknwon species name: " + gasSpecieName)
+            AsaliError("Unknwon species name: " + gasSpecieName)
         }
     }
 
@@ -4398,7 +4400,7 @@ export default function TransportParameters() {
         }
         catch (error) {
             console.log(error);
-            alert("Unknwon species name: " + gasSpecieName)
+            AsaliError("Unknwon species name: " + gasSpecieName)
         }
     }
 
@@ -4408,7 +4410,7 @@ export default function TransportParameters() {
         }
         catch (error) {
             console.log(error);
-            alert("Unknwon species name: " + gasSpecieName)
+            AsaliError("Unknwon species name: " + gasSpecieName)
         }
     }
 
@@ -4418,7 +4420,7 @@ export default function TransportParameters() {
         }
         catch (error) {
             console.log(error);
-            alert("Unknwon species name: " + gasSpecieName)
+            AsaliError("Unknwon species name: " + gasSpecieName)
         }
     }
 

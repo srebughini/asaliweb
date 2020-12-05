@@ -1,9 +1,8 @@
 import ThermoParameters from "./thermo.js"
 import TransportParameters from "./transport.js"
+import {CollisionIntegral11, CollisionIntegral22} from "./omega.js"
+import {Fractions, Parameters, AsaliError} from "./utils.js"
 
-export const Fractions = Object.freeze({ MOLE: "mole", MASS: "mass" });
-
-export const Parameters = Object.freeze({ R: 8314., pi: 3.14159265358979323846 });
 
 export function GasState({ temperature, pressure }) {
     let _temperature = temperature;
@@ -40,12 +39,14 @@ export function GasSpecie({ name, gasState }) {
     let _cp_update = true;
     let _h_update = true;
     let _s_update = true;
+    let _mu_update = true;
 
     //Reset bools
     function _resetBools() {
         _cp_update = true;
         _h_update = true;
         _s_update = true;
+        _mu_update = true;
     }
 
     //Update gas state
@@ -160,6 +161,27 @@ export function GasSpecie({ name, gasState }) {
         return _sMass;
     }
 
+
+    //Viscosity
+    let _mu = 0.;
+
+    function _calculateViscosity() 
+    {
+        if (_mu_update) 
+        {
+            let tr = _temperature / _LJpotential;
+            let dr = 1.e06 * 0.5 * Math.pow(_dipole, 2.) / (_LJpotential * Parameters.k * Math.pow(_LJdiameter, 3.)); 
+            let sigma = CollisionIntegral22(tr, dr);
+            _mu = 1e-05 * (5 / 16) * Math.sqrt(Parameters.pi * Parameters.k * _temperature * _molecularWeight * 1.66054) / (Parameters.pi * sigma * Math.pow(_LJdiameter, 2));
+            _mu_update = false;
+        }
+    }
+
+    function getViscosity() {
+        _calculateViscosity();
+        return _mu;
+    }
+
     function getName() {
         return _name;
     }
@@ -209,7 +231,8 @@ export function GasSpecie({ name, gasState }) {
         getMolarEnthalpy,
         getMassEnthalpy,
         getMolarEntropy,
-        getMassEntropy
+        getMassEntropy, 
+        getViscosity
     }
 }
 
@@ -230,6 +253,11 @@ export function GasMixtureComposition(compositionArray, compositionType) {
         _massFraction = compositionArray.map(compositionDictionary => compositionDictionary.value);
         _molecularWeight = compositionArray.map(compositionDictionary => compositionDictionary.value / compositionDictionary.specie.getMolecularWeight()).reduce((a, b) => a + b, 0);
         _moleFraction = compositionArray.map(compositionDictionary => compositionDictionary.value / compositionDictionary.specie.getMolecularWeight() / _mixtureMolecularWeight);
+    }
+
+    if ( Math.abs(_moleFraction.reduce((a, b) => a + b, 0) - 1.) > 1e-16)
+    {
+        AsaliError("Composition sum != 1");
     }
 
     function getCompositionType() {
@@ -268,6 +296,7 @@ export function GasMixture({ gasState, mixtureComposition }) {
     let _cp_update = true;
     let _h_update = true;
     let _s_update = true;
+    let _mu_update = true;
 
     //Species gas state
     let _species = mixtureComposition.getSpecies();
@@ -279,6 +308,7 @@ export function GasMixture({ gasState, mixtureComposition }) {
     }
 
     //Composition
+    let _speciesMolecularWeight = _species.map(specie => specie.getMolecularWeight())
     let _moleFraction = mixtureComposition.getMoleFraction();
     let _massFraction = mixtureComposition.getMassFraction();
 
@@ -291,10 +321,10 @@ export function GasMixture({ gasState, mixtureComposition }) {
     }
 
     //Mixture molecular weight
-    let _mixtureMolecularWeight = mixtureComposition.getMolecularWeight();
+    let _molecularWeight = mixtureComposition.getMolecularWeight();
 
     function getMolecularWeight() {
-        return _mixtureMolecularWeight;
+        return _molecularWeight;
     }
 
     //Specific heat
@@ -381,6 +411,34 @@ export function GasMixture({ gasState, mixtureComposition }) {
         return _sMixMass;
     }
 
+    //Viscosity
+    let _mu = _species.map(specie => specie.getViscosity());
+    let _muMix = 0.;
+    
+    function _calculateViscosity() 
+    {
+        if (_mu_update) 
+        {
+            _muMix = 0.;
+            let sum = 0.;
+            let phi = 0.;
+            for (let k = 0; k < _numberOfSpecies; k++) {
+                sum = 0.;
+                for (let j = 0; j < _numberOfSpecies; j++) {
+                    phi = (1. / Math.sqrt(8.)) * (1. / Math.sqrt(1. + _speciesMolecularWeight[k] / _speciesMolecularWeight[j]))  * Math.pow((1. + Math.sqrt(_mu[k] / _mu[j]) * Math.pow(_speciesMolecularWeight[j] / _speciesMolecularWeight[k], (1. / 4.))), 2.);
+                    sum = sum + _moleFraction[j] * phi;
+                }
+                _muMix = _muMix + _moleFraction[k] * _mu[k] / sum;
+            }
+            _mu_update = false;
+        }
+    }
+
+    function getViscosity() {
+        _calculateViscosity();
+        return _muMix;
+    }
+
     return {
         getSpecies,
         getMassFraction,
@@ -391,6 +449,7 @@ export function GasMixture({ gasState, mixtureComposition }) {
         getMolarEnthalpy,
         getMassEnthalpy,
         getMolarEntropy,
-        getMassEntropy
+        getMassEntropy,
+        getViscosity
     }
 }

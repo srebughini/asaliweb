@@ -1,3 +1,5 @@
+import {AsaliError} from "./utils.js"
+
 let thermoDict = {
     "AC3H4": [
         6.64430238,
@@ -7738,7 +7740,7 @@ export default function ThermoParameter() {
         }
         catch (error) {
             console.log(error);
-            alert("Unknwon species name: " + gasSpecieName)
+            AsaliError("Unknwon species name: " + gasSpecieName)
         }
     }
 
@@ -7748,7 +7750,7 @@ export default function ThermoParameter() {
         }
         catch (error) {
             console.log(error);
-            alert("Unknwon species name: " + gasSpecieName)
+            AsaliError("Unknwon species name: " + gasSpecieName)
         }
     }
 
